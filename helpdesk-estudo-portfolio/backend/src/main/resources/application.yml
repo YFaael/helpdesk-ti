@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: helpdesk-api
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/helpdesk}
+    username: ${DATABASE_USER:helpdesk}
+    password: ${DATABASE_PASSWORD:helpdesk}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: lax
+        secure: ${SESSION_COOKIE_SECURE:false}
+server:
+  port: 8080
+  error:
+    include-message: never
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+app:
+  seed-demo: ${APP_SEED_DEMO:false}

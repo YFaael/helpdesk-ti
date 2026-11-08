@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f6f8">
+  <meta name="description" content="Projeto de estudo: sistema simples de chamados de suporte técnico.">
+  <title>HelpDesk | Controle de chamados</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="data.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div id="login" class="login-layout">
+    <section class="login-card">
+      <div class="brand"><span class="brand-mark">H</span><strong>HelpDesk</strong></div>
+      <p class="overline">PROJETO DE ESTUDO</p>
+      <h1>Controle de chamados de TI</h1>
+      <p class="subtle">Registre solicitações de suporte e acompanhe o andamento dos atendimentos.</p>
+      <form id="login-form" class="form-stack" hidden>
+        <label>E-mail<input name="email" type="email" autocomplete="username" required placeholder="seu@email.com"></label>
+        <label>Senha<input name="password" type="password" autocomplete="current-password" required placeholder="Sua senha"></label>
+        <button class="button primary" type="submit">Entrar</button>
+        <p class="hint">Ambiente local: use as contas de teste descritas no README.</p>
+      </form>
+      <div class="demo-choice" id="demo-choice" hidden>
+        <p class="form-heading">Escolha um perfil para testar</p>
+        <button class="demo-option" data-demo-role="USER"><span>Funcionário</span><small>Abre e acompanha seus chamados</small></button>
+        <button class="demo-option" data-demo-role="TECH"><span>Técnico</span><small>Atende e responde solicitações</small></button>
+        <button class="demo-option" data-demo-role="ADMIN"><span>Administrador</span><small>Visualiza todos os atendimentos</small></button>
+        <p class="hint">Demonstração local, sem autenticação. Os dados ficam somente neste navegador.</p>
+      </div>
+      <p id="login-error" class="error" role="alert" hidden></p>
+    </section>
+    <aside class="login-note"><strong>Projeto acadêmico / portfólio</strong><p>Desenvolvido para praticar interface web, Java, APIs REST e banco de dados.</p></aside>
+  </div>
+
+  <div id="workspace" class="workspace" hidden>
+    <aside class="sidebar">
+      <div class="brand sidebar-brand"><span class="brand-mark">H</span><strong>HelpDesk</strong></div>
+      <p class="side-caption">SUPORTE INTERNO</p>
+      <nav class="nav" aria-label="Navegação principal">
+        <button class="nav-link active" data-page="dashboard"><span aria-hidden="true">▦</span> Visão geral</button>
+        <button class="nav-link" data-page="tickets"><span aria-hidden="true">☷</span> Chamados</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="profile"><span id="profile-initial" class="avatar">U</span><div><strong id="profile-name"></strong><small id="profile-role"></small></div></div>
+        <button id="logout" class="logout">Sair da conta</button>
+      </div>
+    </aside>
+
+    <div class="main-area">
+      <header class="topbar"><button class="mobile-nav" id="mobile-nav" aria-label="Mostrar ou ocultar menu">☰</button><span class="breadcrumb">Central de suporte <span class="slash">/</span> <span id="breadcrumb-page">Visão geral</span></span><span id="mode-tag" class="mode-tag">Demonstração</span></header>
+      <main class="content">
+        <div class="page-heading"><div><p class="overline" id="page-label">PAINEL</p><h1 id="page-title">Visão geral</h1><p class="subtle" id="page-description">Acompanhe as solicitações de suporte técnico.</p></div><button id="new-ticket" class="button primary"><span aria-hidden="true">＋</span> Novo chamado</button></div>
+        <div id="feedback" class="feedback" role="status" hidden></div>
+
+        <section id="dashboard-page">
+          <div class="stats">
+            <article class="stat"><span>Total de chamados</span><strong id="stat-total">0</strong><small>Registrados no sistema</small></article>
+            <article class="stat"><span>Abertos</span><strong id="stat-open">0</strong><small>Aguardando atendimento</small></article>
+            <article class="stat"><span>Em atendimento</span><strong id="stat-progress">0</strong><small>Em análise ou aguardando</small></article>
+            <article class="stat"><span>Concluídos</span><strong id="stat-done">0</strong><small>Resolvidos ou fechados</small></article>
+          </div>
+          <section class="panel"><div class="panel-title"><div><h2>Chamados recentes</h2><p>Últimas solicitações registradas</p></div><button class="text-button" data-page="tickets">Ver todos →</button></div><div id="recent-list" class="ticket-list"></div></section>
+        </section>
+
+        <section id="tickets-page" hidden>
+          <section class="panel filter-panel"><div class="filters"><label>Buscar chamado<input id="search" type="search" placeholder="Título ou número"></label><label>Status<select id="status-filter"><option value="ALL">Todos</option><option value="OPEN">Aberto</option><option value="IN_PROGRESS">Em atendimento</option><option value="WAITING">Aguardando</option><option value="RESOLVED">Resolvido</option><option value="CLOSED">Fechado</option></select></label><label>Prioridade<select id="priority-filter"><option value="ALL">Todas</option><option value="LOW">Baixa</option><option value="MEDIUM">Média</option><option value="HIGH">Alta</option><option value="CRITICAL">Crítica</option></select></label></div></section>
+          <section class="panel"><div class="panel-title"><div><h2>Solicitações</h2><p id="ticket-counter">0 chamados</p></div></div><div id="all-tickets" class="ticket-list"></div></section>
+        </section>
+
+        <section id="detail-page" hidden>
+          <button id="back-to-tickets" class="back-link">← Voltar para chamados</button>
+          <div class="detail-grid"><div class="panel detail-content"><div class="panel-title"><div><p class="overline" id="detail-number"></p><h2 id="detail-title"></h2></div><span id="detail-status" class="status"></span></div><p id="detail-description" class="description"></p><div id="detail-meta" class="detail-meta"></div><div class="section-rule"></div><h3>Comentários</h3><div id="comments" class="comments"></div><form id="comment-form" class="form-stack"><label for="comment-message">Adicionar comentário</label><textarea id="comment-message" name="message" rows="3" maxlength="3000" required placeholder="Escreva uma atualização sobre o chamado..."></textarea><label id="internal-label" class="checkbox-label" hidden><input type="checkbox" name="internal"> Nota interna (somente equipe)</label><button class="button primary" type="submit">Enviar comentário</button></form></div>
+          <aside class="panel detail-side"><h3>Atendimento</h3><form id="update-form" class="form-stack" hidden><label>Status<select name="status" id="edit-status"><option value="OPEN">Aberto</option><option value="IN_PROGRESS">Em atendimento</option><option value="WAITING">Aguardando</option><option value="RESOLVED">Resolvido</option><option value="CLOSED">Fechado</option></select></label><label>Prioridade<select id="edit-priority" name="priority"><option value="LOW">Baixa</option><option value="MEDIUM">Média</option><option value="HIGH">Alta</option><option value="CRITICAL">Crítica</option></select></label><label>Responsável<select id="edit-assignee" name="assigneeId"><option value="">Sem responsável</option></select></label><button class="button primary" type="submit">Salvar alterações</button></form><div id="readonly-info" class="subtle" hidden>O acompanhamento deste chamado é feito pela equipe de suporte.</div><button id="reopen-button" class="button outline" hidden>Reabrir chamado</button><div class="section-rule"></div><h3>Histórico</h3><div id="history" class="history"></div></aside></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="ticket-dialog" class="ticket-dialog"><form id="new-form" class="form-stack"><div class="dialog-heading"><div><p class="overline">SUPORTE TÉCNICO</p><h2>Abrir chamado</h2></div><button id="close-dialog" type="button" class="close" aria-label="Fechar">×</button></div><label>Título<input name="title" minlength="5" maxlength="180" required placeholder="Ex.: Não consigo acessar a rede"></label><label>Descrição<textarea name="description" minlength="10" maxlength="5000" rows="4" required placeholder="Conte o que está acontecendo e desde quando..."></textarea></label><div class="form-row"><label>Categoria<select name="categoryId" id="new-category" required></select></label><label>Prioridade<select name="priority" required><option value="LOW">Baixa</option><option value="MEDIUM" selected>Média</option><option value="HIGH">Alta</option><option value="CRITICAL">Crítica</option></select></label></div><div class="dialog-actions"><button type="button" id="cancel-dialog" class="button outline">Cancelar</button><button type="submit" class="button primary">Criar chamado</button></div></form></dialog>
+</body>
+</html>
